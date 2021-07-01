@@ -60,21 +60,13 @@ command_add() {
 
 # Remove command
 
-# cat <subfile> | remove <name>
-remove() {
-    IFS=$(printf "\t")
-    while read name url; do
-        if [ "$1" != "$name" ]; then
-            echo "$line"
-        fi
-    done
-}
-
 # command_remove <subfile> <name>
 command_remove() {
     temp="$1-temp"
 
-    cat "$1" | remove "$2" > "$temp"
+    # Remove tabs from name
+    name=$(echo "$2" | tr -d '\t')
+    sed -e "/$name\t.*/d" "$1" > "$temp"
 
     mv -f "$temp" "$1"
 }
