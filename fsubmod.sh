@@ -10,17 +10,22 @@ command_add() {
 
 # Remove command
 
+# cat <subfile> | remove <name>
+remove() {
+    while read line; do
+        name="$(echo "$line" | cut -f1)"
+
+        if [ "$1" != "$name" ]; then
+            echo "$line"
+        fi
+    done
+}
+
 # command_remove <subfile> <name>
 command_remove() {
     temp="$1-temp"
 
-    for line in "$(cat "$1")"; do
-        name="$(echo "$line" | cut -f0)"
-
-        if [ "$2" != "$name" ]; then
-            printf "$line\n" >> "$temp"
-        fi
-    done
+    cat "$1" | remove "$2" > "$temp"
 
     mv -f "$temp" "$1"
 }
@@ -57,11 +62,13 @@ update_single() {
 
 # command_update <subfile>
 command_update() {
-    for line in "$(cat "$1")"; do
-        name="$(echo "$line" | cut -f0)"
-        url="$(echo "$line" | cut -f1)"
+    while read line; do
+        name="$(echo "$line" | cut -f1)"
+        url="$(echo "$line" | cut -f2)"
+        d="$PWD"
         update_single "$name" "$url"
-    done
+        cd "$d"
+    done < "$1"
 }
 
 
@@ -87,4 +94,25 @@ help
 EOF
 }
 
-command_help "$0"
+
+subfile=".submodules"
+
+
+case "$1" in
+    "add")
+        command_add "$subfile" "$2" "$3"
+        ;;
+    "rm")
+        command_remove "$subfile" "$2"
+        ;;
+    "update")
+        command_update "$subfile"
+        ;;
+    "help")
+        command_help
+        ;;
+    *)
+        echo "$0: Command $1 not supported."
+        command_help
+        ;;
+esac
