@@ -81,9 +81,12 @@ Manage submodules for Fossil
 
 add [-i] <name> <url>
     Add the repository at the URL under the directory <name>
+    Also adds the associated files to the Fossil ignore file
     -i performs initialization
+    -n disables adding the files to the Fossil ignore file
 rm [-d] <name>
     Remove the repository under the directory <name> from the update list
+    Does not alter the Fossil ignore file
     -d also deletes the associated files
 update
     Update/initialize all repositories
