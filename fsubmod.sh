@@ -79,15 +79,14 @@ Usage: $1 add/rm/update/help [options...]
 
 Manage submodules for Fossil
 
-add [-i] <name> <url>
+add [-c -i] <name> <url>
     Add the repository at the URL under the directory <name>
-    Also adds the associated files to the Fossil ignore file
-    -i performs initialization
-    -n disables adding the files to the Fossil ignore file
-rm [-d] <name>
+    -c performs the initial clone
+    -i adds the files to the Fossil ignore file
+rm [-d -i] <name>
     Remove the repository under the directory <name> from the update list
-    Does not alter the Fossil ignore file
     -d also deletes the associated files
+    -i removes the files from the Fossil ignore file
 update
     Update/initialize all repositories
 help
