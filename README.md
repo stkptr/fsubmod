@@ -12,17 +12,14 @@ Adds the repository at `<url>` which can be later accessed with `<name>`. The `<
 
 Removes a submodule. Use `-d` to remove the directory as well.
 
-### `init`
-
-Perform the first download for the repositories.
-
 ### `update`
 
-Perform later downloads (`fossil pull`).
+Goes through all the repositories and performs a `fossil pull`. If the repository is not initialized it will be.
 
 ### `help`
 
 Prints help information.
+
 
 ## Files involved
 
