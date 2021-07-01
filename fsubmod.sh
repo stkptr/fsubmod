@@ -1,10 +1,46 @@
 #!/bin/sh
 
+subdir=".subrepos"
+subfile=".submodules"
+
+fossil_ignore=".fossil-settings/ignore-glob"
+
+# Adds the .submodules and .subdir to the ignore
+initial_ignore() {
+    echo "$subdir/" >> "$fossil_ignore"
+    echo "$subfile" >> "$fossil_ignore"
+}
+
 # Add command
 
 # command_add <subfile> <name> <url>
 command_add() {
+    while getopts "ci" name; do
+        case $name in
+            c)
+                clone=1
+                shift
+                ;;
+            i)
+                ignore=1
+                shift
+                ;;
+        esac
+    done
+
+    if [ ! -e "$1" ]; then
+        initial_ignore
+    fi
+
     printf "%s\t%s\n" "$2" "$3" >> "$1"
+
+    if [ $clone ]; then
+        init "$2" "$3"
+    fi
+
+    if [ $ignore ]; then
+        echo "$2" #>> "$fossil_ignore"
+    fi
 }
 
 
@@ -38,10 +74,10 @@ init() {
     url="$2"
     name=$(basename "$dir") # this could cause conflicts
 
-    fossil clone "$url" ".fossil/$name.fossil"
+    fossil clone "$url" "$subdir/$name.fossil"
     mkdir -p "$dir"
     cd "$dir"
-    fossil open ".fossil/$name.fossil"
+    fossil open "$subdir/$name.fossil"
 }
 
 # up <name>
@@ -93,9 +129,6 @@ help
     Print this screen
 EOF
 }
-
-
-subfile=".submodules"
 
 
 case "$1" in
