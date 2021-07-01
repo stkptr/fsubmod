@@ -144,8 +144,14 @@ case "$1" in
     "help")
         command_help
         ;;
-    *)
-        echo "$0: Command $1 not supported."
+    "")
+        echo "$0: no command provided"
         command_help
+        exit 1
+        ;;
+    *)
+        echo "$0: command $1 not supported"
+        command_help
+        exit 1
         ;;
 esac
