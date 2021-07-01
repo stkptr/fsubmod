@@ -3,43 +3,57 @@
 subdir=".subrepos"
 subfile=".submodules"
 
-fossil_ignore=".fossil-settings/ignore-glob"
+fossil_settings=".fossil-settings"
+fossil_ignore="$fossil_settings/ignore-glob"
+
+ignore() {
+    if [ -d "$fossil_settings" ]; then
+        echo "$1" >> "$fossil_ignore"
+    fi
+}
 
 # Adds the .submodules and .subdir to the ignore
 initial_ignore() {
-    echo "$subdir/" >> "$fossil_ignore"
-    echo "$subfile" >> "$fossil_ignore"
+    ignore "$subdir/"
+    ignore "$subfile"
 }
+
 
 # Add command
 
-# command_add <subfile> <name> <url>
+# command_add <subfile> [<options>] <name> <url>
 command_add() {
+    subfile="$1"
+    shift
+
     while getopts "ci" name; do
         case $name in
             c)
                 clone=1
-                shift
                 ;;
             i)
                 ignore=1
-                shift
                 ;;
         esac
     done
 
+    shift $(( $OPTIND - 1 ))
+
+    # Perform first-time initialization
     if [ ! -e "$1" ]; then
         initial_ignore
+        mkdir -p "$subdir"
     fi
 
-    printf "%s\t%s\n" "$2" "$3" >> "$1"
+    # Add the line to the .submodules
+    printf "%s\t%s\n" "$1" "$2" >> "$subfile"
 
     if [ $clone ]; then
-        init "$2" "$3"
+        init "$1" "$2"
     fi
 
     if [ $ignore ]; then
-        echo "$2" #>> "$fossil_ignore"
+        ignore "$1"
     fi
 }
 
@@ -133,10 +147,12 @@ EOF
 
 case "$1" in
     "add")
-        command_add "$subfile" "$2" "$3"
+        shift
+        command_add "$subfile" $*
         ;;
     "rm")
-        command_remove "$subfile" "$2"
+        shift
+        command_remove "$subfile" $*
         ;;
     "update")
         command_update "$subfile"
