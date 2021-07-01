@@ -12,9 +12,8 @@ command_add() {
 
 # cat <subfile> | remove <name>
 remove() {
-    while read line; do
-        name="$(echo "$line" | cut -f1)"
-
+    IFS=$(printf "\t")
+    while read name url; do
         if [ "$1" != "$name" ]; then
             echo "$line"
         fi
@@ -62,9 +61,8 @@ update_single() {
 
 # command_update <subfile>
 command_update() {
-    while read line; do
-        name="$(echo "$line" | cut -f1)"
-        url="$(echo "$line" | cut -f2)"
+    IFS=$(printf "\t")
+    while read name url; do
         d="$PWD"
         update_single "$name" "$url"
         cd "$d"
