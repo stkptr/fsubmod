@@ -8,20 +8,22 @@ subfile=".submodules"
 fossil_settings=".fossil-settings"
 fossil_ignore="$fossil_settings/ignore-glob"
 
-# POSIX
+# Returns a unique (enough) file for temporary use
 mktemp() {
     name="/tmp/$(basename "$progname").$$"
     touch "$name"
     echo "$name"
 }
 
+# ignore RULE
+# Add a rule to the ignore-glob
 ignore() {
     if [ -d "$fossil_settings" ]; then
         echo "$1" >> "$fossil_ignore"
     fi
 }
 
-# Adds the .submodules and .subdir to the ignore
+# Adds the .submodules and .subdir to the ignore-glob
 initial_ignore() {
     ignore "$subdir/"
     ignore "$subfile"
@@ -30,7 +32,7 @@ initial_ignore() {
 
 # Add command
 
-# command_add <subfile> [<options>] <name> <url>
+# command_add SUBFILE ?OPTIONS? NAME URL
 command_add() {
     subfile="$1"
     shift
@@ -69,7 +71,7 @@ command_add() {
 
 # Remove command
 
-# command_remove <subfile> <name>
+# command_remove SUBFILE ?OPTIONS? NAME
 command_remove() {
     subfile="$1"
     shift
@@ -111,7 +113,8 @@ command_remove() {
 
 # Update command
 
-# init <name> <url>
+# init NAME URL
+# Performs a fossil clone, then opens the repository in the target directory
 init() {
     dir="$1"
     url="$2"
@@ -123,13 +126,16 @@ init() {
     fossil open "$subdir/$name.fossil"
 }
 
-# up <name>
+# up NAME
+# Update a repository to the newest version
 up() {
     cd "$1"
+    fossil pull
     fossil up
 }
 
-# update_single <name> <url>
+# update_single NAME URL
+# Update NAME, determining whether or not initialization is needed
 update_single() {
     if [ -e "$1" ]; then
         up "$1"
@@ -138,7 +144,7 @@ update_single() {
     fi
 }
 
-# command_update <subfile>
+# command_update SUBFILE
 command_update() {
     IFS=$(printf "\t")
     while read name url; do
@@ -151,7 +157,7 @@ command_update() {
 
 # List command
 
-# command_list <subfile>
+# command_list SUBFILE
 command_list() {
     cat "$1"
 }
@@ -159,7 +165,7 @@ command_list() {
 
 # Help command
 
-# command_help <program_name>
+# command_help PROGNAME
 command_help() {
     cat << EOF
 Usage: $1 add/rm/update/list/help ?OPTIONS?
