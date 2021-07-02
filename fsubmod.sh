@@ -62,13 +62,41 @@ command_add() {
 
 # command_remove <subfile> <name>
 command_remove() {
-    temp="$1-temp"
+    subfile="$1"
+    shift
+
+    while getopts "di" name; do
+        case $name in
+            d)
+                delete=1
+                ;;
+            i)
+                ignore=1
+                ;;
+        esac
+    done
+
+    shift $(( $OPTIND - 1 ))
+
+    temp="$subfile-temp"
 
     # Remove tabs from name
-    name=$(echo "$2" | tr -d '\t')
-    sed -e "/$name\t.*/d" "$1" > "$temp"
+    name=$(echo "$1" | tr -d '\t')
 
-    mv -f "$temp" "$1"
+    # Perform the removal
+    sed -e "/$name\t.*/d" "$subfile" > "$temp"
+
+    mv -f "$temp" "$subfile"
+
+    if [ $delete ]; then
+        rm -rf "$1"
+    fi
+
+    if [ $ignore -a -d "$fossil_settings" ]; then
+        temp2="$fossil_ignore-temp"
+        sed -e "/$name/d" "$fossil_ignore" > "$temp2"
+        mv -f "$temp2" "$fossil_ignore"
+    fi
 }
 
 
