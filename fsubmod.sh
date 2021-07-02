@@ -1,10 +1,19 @@
 #!/bin/sh
 
+progname="$0"
+
 subdir=".subrepos"
 subfile=".submodules"
 
 fossil_settings=".fossil-settings"
 fossil_ignore="$fossil_settings/ignore-glob"
+
+# POSIX
+mktemp() {
+    name="/tmp/$(basename "$progname").$$"
+    touch "$name"
+    echo "$name"
+}
 
 ignore() {
     if [ -d "$fossil_settings" ]; then
@@ -78,10 +87,10 @@ command_remove() {
 
     shift $(( $OPTIND - 1 ))
 
-    temp="$subfile-temp"
+    temp="$(mktemp)"
 
     # Remove tabs from name
-    name=$(echo "$1" | tr -d '\t')
+    name="$(echo "$1" | tr -d '\t')"
 
     # Perform the removal
     sed -e "/$name\t.*/d" "$subfile" > "$temp"
@@ -92,8 +101,8 @@ command_remove() {
         rm -rf "$1"
     fi
 
-    if [ $ignore -a -d "$fossil_settings" ]; then
-        temp2="$fossil_ignore-temp"
+    if [ "$ignore" = 1 -a -d "$fossil_settings" ]; then
+        temp2="$(mktemp)"
         sed -e "/$name/d" "$fossil_ignore" > "$temp2"
         mv -f "$temp2" "$fossil_ignore"
     fi
