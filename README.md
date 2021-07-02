@@ -2,6 +2,9 @@
 
 `fsubmod` is a little script for dealing with submodules in Fossil. It's very simple, with just a few commands.
 
+The script is POSIX-compliant, so there shouldn't be any shell compatibility issues.
+
+
 ## Commands
 
 ### `add ?OPTIONS? NAME URL`
@@ -9,16 +12,16 @@
 Adds the repository at `URL` which can be later accessed with `NAME`. The `NAME` is also the directory for the submodule.
 
 Options:
-- `-c` clone the repository immediately
-- `-i` add the directory to the ignore-glob
+- `-c` Clone the repository immediately
+- `-i` Add the directory to the ignore-glob
 
 ### `rm ?OPTIONS? NAME`
 
 Removes the submodule named `NAME`.
 
 Options:
-- `-d` remove the directory as well
-- `-i` remove the ignore-glob line
+- `-d` Remove the directory as well
+- `-i` Remove the ignore-glob line
 
 ### `update`
 
