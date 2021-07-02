@@ -112,12 +112,20 @@ command_update() {
 }
 
 
+# List command
+
+# command_list <subfile>
+command_list() {
+    cat "$1"
+}
+
+
 # Help command
 
 # command_help <program_name>
 command_help() {
     cat << EOF
-Usage: $1 add/rm/update/help [options...]
+Usage: $1 add/rm/update/list/help [options...]
 
 Manage submodules for Fossil
 
@@ -131,6 +139,8 @@ rm [-d -i] <name>
     -i removes the files from the Fossil ignore file
 update
     Update/initialize all repositories
+list
+    List currently added submodules
 help
     Print this screen
 EOF
@@ -148,6 +158,9 @@ case "$1" in
         ;;
     "update")
         command_update "$subfile"
+        ;;
+    "list")
+        command_list "$subfile"
         ;;
     "help")
         command_help
