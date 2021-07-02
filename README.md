@@ -4,21 +4,29 @@
 
 ## Commands
 
-### `add [-c -i] <name> <url>`
+### `add ?OPTIONS? NAME URL`
 
-Adds the repository at `<url>` which can be later accessed with `<name>`. The `<name>` is also the directory for the submodule. Use `-c` to clone it immediately. `-i` adds the directory to the ignore-glob.
+Adds the repository at `URL` which can be later accessed with `NAME`. The `NAME` is also the directory for the submodule.
 
-### `rm [-d -i] <name>`
+Options:
+- `-c` clone the repository immediately
+- `-i` add the directory to the ignore-glob
 
-Removes a submodule. Use `-d` to remove the directory as well. Use `-i` to also remove the ignore-glob line.
+### `rm ?OPTIONS? NAME`
+
+Removes the submodule named `NAME`.
+
+Options:
+- `-d` remove the directory as well
+- `-i` remove the ignore-glob line
 
 ### `update`
 
-Goes through all the repositories and performs a `fossil up`. If the repository is not initialized it will be with `fossil clone`.
+Goes through all the repositories and performs a `fossil up`. If the repository is not initialized it will be with `fossil clone` and `fossil open`.
 
 ### `list`
 
-List the currently added submodules.
+List the currently added submodules, one per line, with the `NAME` and `URL` separated by a tab.
 
 ### `help`
 

@@ -125,18 +125,20 @@ command_list() {
 # command_help <program_name>
 command_help() {
     cat << EOF
-Usage: $1 add/rm/update/list/help [options...]
+Usage: $1 add/rm/update/list/help ?OPTIONS?
 
 Manage submodules for Fossil
 
-add [-c -i] <name> <url>
-    Add the repository at the URL under the directory <name>
-    -c performs the initial clone
-    -i adds the files to the Fossil ignore file
-rm [-d -i] <name>
+add ?OPTIONS? NAME URL
+    Add the repository at URL under the directory NAME
+    Options:
+       -c   Perform the initial clone
+       -i   Add the submodule to the ignore-glob
+rm ?OPTIONS? NAME
     Remove the repository under the directory <name> from the update list
-    -d also deletes the associated files
-    -i removes the files from the Fossil ignore file
+    Options:
+       -d   Delete submodule directory
+       -i   Remove corresponding lines in the ignore-glob
 update
     Update/initialize all repositories
 list
@@ -163,16 +165,16 @@ case "$1" in
         command_list "$subfile"
         ;;
     "help")
-        command_help
+        command_help "$0"
         ;;
     "")
         echo "$0: no command provided"
-        command_help
+        command_help "$0"
         exit 1
         ;;
     *)
-        echo "$0: command $1 not supported"
-        command_help
+        echo "$0: command '$1' not supported"
+        command_help "$0"
         exit 1
         ;;
 esac
